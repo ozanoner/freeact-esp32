@@ -1,0 +1,5 @@
+[wokwi]
+version = 1
+elf = "examples/blinky_button/build/blinky_button.elf"
+firmware = "examples/blinky_button/build/blinky_button.bin"
+gdbServerPort=3333

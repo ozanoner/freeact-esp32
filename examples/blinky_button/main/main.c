@@ -1,13 +1,65 @@
+/* Interrupt Example
+
+   This example code is in the Public Domain (or CC0 licensed, at your option.)
+
+   Unless required by applicable law or agreed to in writing, this
+   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+   CONDITIONS OF ANY KIND, either express or implied.
+*/
+
+#include <stdio.h>
 
 #include "FreeAct.h"
-#include "bsp.h"
-#include "esp_err.h"
-#include "esp_log.h"
+#include "driver/gpio.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
-Active* AO_blinkyButton;
+#define LED_RED GPIO_NUM_2
+#define BTN_RED GPIO_NUM_13
+#define DELAY_TIME 200
 
-void app_main(void)
+volatile bool button_pressed = false;
+Active*       AO_blinkyButton;
+
+static void gpio_isr_handler(void* arg)
 {
-    BSP_init();
-    BSP_start();
+    button_pressed = true;
+}
+
+void button_config()
+{
+    gpio_install_isr_service(0);
+    printf("configuring button\n");
+    gpio_reset_pin(BTN_RED);
+    gpio_set_direction(BTN_RED, GPIO_MODE_INPUT);
+    gpio_pullup_en(BTN_RED);
+    gpio_set_intr_type(BTN_RED, GPIO_INTR_POSEDGE);
+    gpio_isr_handler_add(BTN_RED, gpio_isr_handler, NULL);
+    printf("config complete\n");
+}
+
+void led_config()
+{
+    gpio_reset_pin(LED_RED);
+    gpio_set_direction(LED_RED, GPIO_MODE_OUTPUT);
+}
+
+void app_main()
+{
+    uint8_t led_value = 0;
+
+    button_config();
+    led_config();
+
+    while (1)
+    {
+        if (button_pressed)
+        {
+            printf("*\n");
+            button_pressed = false;
+            led_value      = !led_value;
+            gpio_set_level(LED_RED, led_value);
+        }
+        vTaskDelay(DELAY_TIME / portTICK_PERIOD_MS);
+    }
 }
