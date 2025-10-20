@@ -1,0 +1,15 @@
+## IDF Component Manager Manifest File
+
+version: "0.1.0"
+description: "An ESP-IDF component for FreeACT."
+tags:
+  - "FreeACT"
+  - "Active Object"
+  - "Actor"
+  - "design pattern"
+url: "https://github.com/ozanoner/freeact-esp32"
+issues: "https://github.com/ozanoner/freeact-esp32/issues"
+documentation: "https://github.com/ozanoner/freeact-esp32/blob/master/README.md"
+repository: "https://github.com/ozanoner/freeact-esp32.git"
+dependencies:
+  idf: ">=5.0"
