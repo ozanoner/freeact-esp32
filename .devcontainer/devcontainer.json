@@ -1,0 +1,52 @@
+{
+  "name": "ESP-IDF v5.4",
+  "build": { "dockerfile": "Dockerfile" },
+
+  // Run as root (your current base image doesn’t have a “vscode” user)
+  "remoteUser": "root",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "espressif.esp-idf-extension",
+        "Wokwi.wokwi-vscode",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.cmake-tools",
+        "cschlosser.doxdocgen",
+        "tomoki1207.pdf"
+      ],
+      "settings": {
+        "editor.formatOnSaveMode": "file",
+        "editor.formatOnSave": true,
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "idf.espIdfPath": "/opt/esp/idf",
+        "idf.customExtraPaths": "",
+        "idf.pythonBinPath": "/opt/esp/python_env/idf5.4_py3.12_env/bin/python",
+        "idf.toolsPath": "/opt/esp",
+        "idf.gitPath": "/usr/bin/git"
+      }
+    }
+  },
+
+  // Mount the local workspace into /workspaces
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces,type=bind",
+  "workspaceFolder": "/workspaces",
+
+  "mounts": [
+    "source=${env:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached",
+    "source=extensionCache,target=/root/.vscode-server/extensions,type=volume",
+    // Access serial devices
+    "source=/dev,target=/dev,type=bind"
+  ],
+
+  // Needed for USB/serial access to ESP32
+  "runArgs": ["--privileged"],
+
+  "postCreateCommand": "git config --system --add safe.directory ${containerWorkspaceFolder}",
+
+  "containerEnv": {
+    "LC_ALL": "C.UTF-8",
+    "LANG": "C.UTF-8"
+  }
+}
