@@ -1,2 +1,2 @@
-idf_component_register(SRCS "freeact-esp32.c"
+idf_component_register(SRCS "src/FreeAct.c"
                     INCLUDE_DIRS "include")
