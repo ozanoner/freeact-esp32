@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Lab Project: BlinkyButton/Button with Active Objects and FreeRTOS
- * Board: EMF32-SLSTK3401A
+ * Board: ESP32*
  *
  *                    Q u a n t u m  L e a P s
  *                    ------------------------
