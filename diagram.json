@@ -1,0 +1,80 @@
+{
+    "version": 1,
+    "author": "Benny Meisels",
+    "editor": "wokwi",
+    "parts": [
+        {
+            "type": "wokwi-esp32-devkit-v1",
+            "id": "esp",
+            "top": 4.7,
+            "left": -5,
+            "attrs": {
+                "builder": "esp-idf"
+            }
+        },
+        {
+            "type": "wokwi-led",
+            "id": "led-red",
+            "top": 15.6,
+            "left": 137.6,
+            "attrs": {
+                "color": "red",
+                "flip": "1"
+            }
+        },
+        {
+            "type": "wokwi-pushbutton",
+            "id": "btn-red",
+            "top": 77.4,
+            "left": -117.2,
+            "attrs": {
+                "color": "red",
+                "bounce": "0"
+            }
+        }
+    ],
+    "connections": [
+        [
+            "esp:TX0",
+            "$serialMonitor:RX",
+            "",
+            []
+        ],
+        [
+            "esp:RX0",
+            "$serialMonitor:TX",
+            "",
+            []
+        ],
+        [
+            "esp:GND.1",
+            "led-red:C",
+            "black",
+            []
+        ],
+        [
+            "esp:D2",
+            "led-red:A",
+            "blue",
+            []
+        ],
+        [
+            "btn-red:2.r",
+            "esp:GND.2",
+            "black",
+            [
+                "v0"
+            ]
+        ],
+        [
+            "btn-red:1.r",
+            "esp:D13",
+            "green",
+            [
+                "h16.51",
+                "v53.16"
+            ]
+        ]
+    ],
+    "dependencies": {}
+}
