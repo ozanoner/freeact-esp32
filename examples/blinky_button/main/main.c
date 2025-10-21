@@ -1,13 +1,3 @@
-/*
- * Lab Project: BlinkyButton/Button with RTOS (FreeRTOS) and blocking
- * Board: ESP32*
- *
- * Copyright (C) 2005-2020 Quantum Leaps, LLC. All rights reserved.
- *
- * Contact information:
- * <www.state-machine.com>
- * <info@state-machine.com>
- */
 
 #include "FreeAct.h"
 #include "bsp.h"
