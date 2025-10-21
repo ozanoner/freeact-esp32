@@ -1,16 +1,19 @@
-/* Interrupt Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
-
-#include <stdio.h>
+/*
+ * Lab Project: BlinkyButton/Button with RTOS (FreeRTOS) and blocking
+ * Board: ESP32*
+ *
+ * Copyright (C) 2005-2020 Quantum Leaps, LLC. All rights reserved.
+ *
+ * Contact information:
+ * <www.state-machine.com>
+ * <info@state-machine.com>
+ */
 
 #include "FreeAct.h"
 #include "bsp.h"
+#include "esp_log.h"
+
+#define TAG "app"
 
 /* The BlinkyButton AO */
 typedef struct
@@ -34,14 +37,13 @@ static void BlinkyButton_dispatch(BlinkyButton* const me, Event const* const e)
             { /* LED not on */
                 BSP_led1_on();
                 me->isLedOn = true;
-                TimeEvent_arm(&me->te, pdMS_TO_TICKS(200));
             }
             else
             { /* LED is on */
                 BSP_led1_off();
                 me->isLedOn = false;
-                TimeEvent_arm(&me->te, pdMS_TO_TICKS(800));
             }
+            TimeEvent_arm(&me->te, 1000);
             break;
         }
         case BUTTON_PRESSED_SIG:
@@ -69,13 +71,14 @@ void BlinkyButton_ctor(BlinkyButton* const me)
     me->isLedOn = false;
 }
 
-static StackType_t  blinkyButton_stack[configMINIMAL_STACK_SIZE]; /* task stack */
+static StackType_t  blinkyButton_stack[configMINIMAL_STACK_SIZE * 2]; /* task stack */
 static Event*       blinkyButton_queue[10];
 static BlinkyButton blinkyButton;
 Active*             AO_blinkyButton = &blinkyButton.super;
 
 void app_main()
 {
+    ESP_LOGI(TAG, "BlinkyButton example start");
     BSP_init(); /* initialize the BSP */
 
     /* create and start the BlinkyButton AO */
@@ -90,45 +93,3 @@ void app_main()
 
     BSP_start(); /* configure and start interrupts */
 }
-
-/*
-
-void button_config()
-{
-    gpio_install_isr_service(0);
-    printf("configuring button\n");
-    gpio_reset_pin(BTN_RED);
-    gpio_set_direction(BTN_RED, GPIO_MODE_INPUT);
-    gpio_pullup_en(BTN_RED);
-    gpio_set_intr_type(BTN_RED, GPIO_INTR_POSEDGE);
-    gpio_isr_handler_add(BTN_RED, gpio_isr_handler, NULL);
-    printf("config complete\n");
-}
-
-void led_config()
-{
-    gpio_reset_pin(LED_RED);
-    gpio_set_direction(LED_RED, GPIO_MODE_OUTPUT);
-}
-
-void app_main()
-{
-    uint8_t led_value = 0;
-
-    button_config();
-    led_config();
-
-    while (1)
-    {
-        if (button_pressed)
-        {
-            printf("*\n");
-            button_pressed = false;
-            led_value      = !led_value;
-            gpio_set_level(LED_RED, led_value);
-        }
-        vTaskDelay(DELAY_TIME / portTICK_PERIOD_MS);
-    }
-}
-
-*/

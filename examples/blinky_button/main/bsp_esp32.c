@@ -37,6 +37,8 @@ void BSP_init(void)
     // Configure LED
     gpio_reset_pin(LED_RED);
     gpio_set_direction(LED_RED, GPIO_MODE_OUTPUT);
+    gpio_reset_pin(LED_BLUE);
+    gpio_set_direction(LED_BLUE, GPIO_MODE_OUTPUT);
 }
 
 void BSP_start(void)
