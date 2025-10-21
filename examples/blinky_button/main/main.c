@@ -37,13 +37,14 @@ static void BlinkyButton_dispatch(BlinkyButton* const me, Event const* const e)
             { /* LED not on */
                 BSP_led1_on();
                 me->isLedOn = true;
+                TimeEvent_arm(&me->te, 200);
             }
             else
             { /* LED is on */
                 BSP_led1_off();
                 me->isLedOn = false;
+                TimeEvent_arm(&me->te, 800);
             }
-            TimeEvent_arm(&me->te, 1000);
             break;
         }
         case BUTTON_PRESSED_SIG:
