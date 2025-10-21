@@ -2,10 +2,6 @@
  * Lab Project: BlinkyButton/Button with Active Objects and FreeRTOS
  * Board: ESP32*
  *
- *                    Q u a n t u m  L e a P s
- *                    ------------------------
- *                    Modern Embedded Software
- *
  * Copyright (C) 2005-2020 Quantum Leaps, LLC. All rights reserved.
  *
  * Contact information:
