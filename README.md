@@ -1,6 +1,6 @@
 # FreeAct for ESP32
 
-[![Component Registry](https://components.espressif.com/components/ozanoner/freeact-esp32/badge.svg)](https://components.espressif.com/components/ozanoner/freeact-esp32)
+[![Component Registry](https://components.espressif.com/components/ozanoner/freeact-esp32/badge.svg?version=latest)](https://components.espressif.com/components/ozanoner/freeact-esp32)
 
 A port of the [FreeAct library](https://github.com/QuantumLeaps/FreeACT) for ESP32 microcontrollers, providing a lightweight Active Object pattern implementation based on FreeRTOS.
 
