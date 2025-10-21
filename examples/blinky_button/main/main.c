@@ -10,21 +10,88 @@
 #include <stdio.h>
 
 #include "FreeAct.h"
-#include "driver/gpio.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "bsp.h"
 
-#define LED_RED GPIO_NUM_2
-#define BTN_RED GPIO_NUM_13
-#define DELAY_TIME 200
-
-volatile bool button_pressed = false;
-Active*       AO_blinkyButton;
-
-static void gpio_isr_handler(void* arg)
+/* The BlinkyButton AO */
+typedef struct
 {
-    button_pressed = true;
+    Active super; /* inherit Active base class */
+    /* add private data for the AO... */
+    TimeEvent te;
+    bool      isLedOn;
+} BlinkyButton;
+
+void BlinkyButton_ctor(BlinkyButton* const me);
+
+static void BlinkyButton_dispatch(BlinkyButton* const me, Event const* const e)
+{
+    switch (e->sig)
+    {
+        case INIT_SIG: /* intentionally fall through... */
+        case TIMEOUT_SIG:
+        {
+            if (!me->isLedOn)
+            { /* LED not on */
+                BSP_led1_on();
+                me->isLedOn = true;
+                TimeEvent_arm(&me->te, pdMS_TO_TICKS(200));
+            }
+            else
+            { /* LED is on */
+                BSP_led1_off();
+                me->isLedOn = false;
+                TimeEvent_arm(&me->te, pdMS_TO_TICKS(800));
+            }
+            break;
+        }
+        case BUTTON_PRESSED_SIG:
+        {
+            BSP_led0_on();
+            break;
+        }
+        case BUTTON_RELEASED_SIG:
+        {
+            BSP_led0_off();
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
 }
+
+void BlinkyButton_ctor(BlinkyButton* const me)
+{
+    Active_ctor(&me->super, (DispatchHandler)&BlinkyButton_dispatch);
+    me->te.type = TYPE_ONE_SHOT;
+    TimeEvent_ctor(&me->te, TIMEOUT_SIG, &me->super);
+    me->isLedOn = false;
+}
+
+static StackType_t  blinkyButton_stack[configMINIMAL_STACK_SIZE]; /* task stack */
+static Event*       blinkyButton_queue[10];
+static BlinkyButton blinkyButton;
+Active*             AO_blinkyButton = &blinkyButton.super;
+
+void app_main()
+{
+    BSP_init(); /* initialize the BSP */
+
+    /* create and start the BlinkyButton AO */
+    BlinkyButton_ctor(&blinkyButton);
+    Active_start(AO_blinkyButton,                                             ///< Active object to start
+                 1U,                                                          ///< Task priority (1-based)
+                 blinkyButton_queue,                                          ///< event queue storage
+                 sizeof(blinkyButton_queue) / sizeof(blinkyButton_queue[0]),  ///< queue length
+                 blinkyButton_stack,                                          ///< stack storage
+                 sizeof(blinkyButton_stack),                                  ///< stack size in bytes
+                 0U);
+
+    BSP_start(); /* configure and start interrupts */
+}
+
+/*
 
 void button_config()
 {
@@ -63,3 +130,5 @@ void app_main()
         vTaskDelay(DELAY_TIME / portTICK_PERIOD_MS);
     }
 }
+
+*/

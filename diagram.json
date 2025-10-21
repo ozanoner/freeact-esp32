@@ -23,6 +23,16 @@
             }
         },
         {
+            "type": "wokwi-led",
+            "id": "led-blue",
+            "top": 15.6,
+            "left": 177.6,
+            "attrs": {
+                "color": "blue",
+                "flip": "1"
+            }
+        },
+        {
             "type": "wokwi-pushbutton",
             "id": "btn-red",
             "top": 77.4,
@@ -55,6 +65,18 @@
         [
             "esp:D2",
             "led-red:A",
+            "yellow",
+            []
+        ],
+        [
+            "esp:GND.1",
+            "led-blue:C",
+            "black",
+            []
+        ],
+        [
+            "esp:D4",
+            "led-blue:A",
             "blue",
             []
         ],
