@@ -86,7 +86,7 @@ cd examples/blinky_button
 # Update the component version
 vi main/idf_component.yml
 
-# Configure the project (optional - uses defaults)
+# Configure GPIOs 
 idf.py menuconfig
 
 # Build the project

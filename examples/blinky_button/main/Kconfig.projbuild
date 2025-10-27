@@ -1,0 +1,26 @@
+
+
+menu "Blinky Button Example"
+
+    config EXAMPLE_BLINKY_BUTTON_GPIO_LED_RED
+        int "Red LED GPIO"
+        default 18
+        help
+            GPIO number for the Red LED.
+            This LED indicates button press feedback.
+
+    config EXAMPLE_BLINKY_BUTTON_GPIO_LED_BLUE
+        int "Blue LED GPIO"
+        default 19
+        help
+            GPIO number for the Blue LED.
+            This LED indicates the blinking pattern.
+
+    config EXAMPLE_BLINKY_BUTTON_GPIO_BUTTON
+        int "Button GPIO"
+        default 22
+        help
+            GPIO number for the Button.
+            This button is used for user input.
+
+endmenu
