@@ -15,14 +15,13 @@
  */
 
 #include "bsp.h"
+#include "button_gpio.h"
 #include "driver/gpio.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "iot_button.h"
 
-#define LED_RED GPIO_NUM_2   ///< Red LED (LED0) connected to GPIO2
-#define LED_BLUE GPIO_NUM_4  ///< Blue LED (LED1) connected to GPIO4
-#define BTN_RED GPIO_NUM_13  ///< Button connected to GPIO13
-#define DELAY_TIME 200       ///< General delay time constant (unused)
+#define LED_RED GPIO_NUM_18   ///< Red LED (LED0) connected to GPIO2
+#define LED_BLUE GPIO_NUM_19  ///< Blue LED (LED1) connected to GPIO4
+#define BTN_RED GPIO_NUM_22   ///< Button connected to GPIO13
 
 /**
  * @brief GPIO interrupt handler for button events
@@ -39,19 +38,24 @@
  * - BUTTON_PRESSED_SIG: When button is pressed (GPIO low)
  * - BUTTON_RELEASED_SIG: When button is released (GPIO high)
  */
-static void button_isr_handler(void* arg)
+static void button_event_cb(void* arg, void* data)
 {
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    button_event_t event = iot_button_get_event(arg);
 
-    if (gpio_get_level(BTN_RED) == 0)
+    switch (event)
     {
-        static Event const buttonPressedEvt = {BUTTON_PRESSED_SIG};  ///< Button pressed event
-        Active_postFromISR(AO_blinkyButton, &buttonPressedEvt, &xHigherPriorityTaskWoken);
-    }
-    else
-    {
-        static Event const buttonReleasedEvt = {BUTTON_RELEASED_SIG};  ///< Button released event
-        Active_postFromISR(AO_blinkyButton, &buttonReleasedEvt, &xHigherPriorityTaskWoken);
+        case BUTTON_PRESS_DOWN:
+            static Event const buttonPressedEvt = {BUTTON_PRESSED_SIG};  ///< Button pressed event
+            Active_post(AO_blinkyButton, &buttonPressedEvt);
+            break;
+
+        case BUTTON_PRESS_UP:
+            static Event const buttonReleasedEvt = {BUTTON_RELEASED_SIG};  ///< Button released event
+            Active_post(AO_blinkyButton, &buttonReleasedEvt);
+            break;
+
+        default:
+            break;
     }
 }
 
@@ -69,13 +73,17 @@ static void button_isr_handler(void* arg)
  */
 void BSP_init(void)
 {
-    // Configure button
-    gpio_install_isr_service(0);                              ///< Install GPIO ISR service
-    gpio_reset_pin(BTN_RED);                                  ///< Reset button pin to default state
-    gpio_set_direction(BTN_RED, GPIO_MODE_INPUT);             ///< Set button as input
-    gpio_pullup_en(BTN_RED);                                  ///< Enable internal pull-up resistor
-    gpio_set_intr_type(BTN_RED, GPIO_INTR_ANYEDGE);           ///< Trigger on both edges
-    gpio_isr_handler_add(BTN_RED, button_isr_handler, NULL);  ///< Add ISR handler
+    const button_config_t      btn_cfg      = {0};
+    const button_gpio_config_t btn_gpio_cfg = {
+        .gpio_num     = BTN_RED,
+        .active_level = 0,
+    };
+
+    static button_handle_t gpio_btn = NULL;
+
+    iot_button_new_gpio_device(&btn_cfg, &btn_gpio_cfg, &gpio_btn);
+    iot_button_register_cb(gpio_btn, BUTTON_PRESS_DOWN, NULL, button_event_cb, NULL);
+    iot_button_register_cb(gpio_btn, BUTTON_PRESS_UP, NULL, button_event_cb, NULL);
 
     // Configure LED
     gpio_reset_pin(LED_RED);                         ///< Reset red LED pin

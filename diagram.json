@@ -63,7 +63,7 @@
             []
         ],
         [
-            "esp:D2",
+            "esp:D18",
             "led-red:A",
             "yellow",
             []
@@ -75,7 +75,7 @@
             []
         ],
         [
-            "esp:D4",
+            "esp:D19",
             "led-blue:A",
             "blue",
             []
@@ -90,7 +90,7 @@
         ],
         [
             "btn-red:1.r",
-            "esp:D13",
+            "esp:D22",
             "green",
             [
                 "h16.51",
