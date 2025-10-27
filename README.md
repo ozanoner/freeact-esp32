@@ -158,4 +158,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## Support
 
 For issues related to this ESP32 port, please open an issue on this repository.
-For questions about the original FreeAct library, visit the [Quantum Leaps forum](https://www.state-machine.com/forums).
+For questions about the original FreeAct library, visit the [Quantum Leaps forum](https://sourceforge.net/p/qpc/discussion/668726).
