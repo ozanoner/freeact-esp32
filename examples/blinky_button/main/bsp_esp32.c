@@ -19,9 +19,9 @@
 #include "driver/gpio.h"
 #include "iot_button.h"
 
-#define LED_RED GPIO_NUM_18   ///< Red LED (LED0) connected to GPIO18
-#define LED_BLUE GPIO_NUM_19  ///< Blue LED (LED1) connected to GPIO19
-#define BTN_RED GPIO_NUM_22   ///< Button connected to GPIO22 (active low)
+#define LED_RED CONFIG_EXAMPLE_BLINKY_BUTTON_GPIO_LED_RED    ///< Red LED (LED0) connected to GPIO18
+#define LED_BLUE CONFIG_EXAMPLE_BLINKY_BUTTON_GPIO_LED_BLUE  ///< Blue LED (LED1) connected to GPIO19
+#define BTN_RED CONFIG_EXAMPLE_BLINKY_BUTTON_GPIO_BUTTON     ///< Button connected to GPIO22 (active low)
 
 /**
  * @brief Button event callback handler using ESP-IDF iot_button component
