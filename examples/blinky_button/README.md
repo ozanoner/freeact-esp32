@@ -19,12 +19,19 @@ The BlinkyButton example showcases:
 
 ## GPIO Configuration
 
-The example uses a Board Support Package (BSP) that defines:
-- **LED0**: Connected to a GPIO pin for button feedback
-- **LED1**: Connected to a GPIO pin for blinking pattern
-- **Button**: Connected to a GPIO pin with interrupt capability
+The example uses configurable GPIO assignments through ESP-IDF's menuconfig system:
 
-> **Note**: GPIO pin assignments are defined in the BSP module.
+**Default GPIO Assignments:**
+- **LED0 (Red)**: GPIO 18 - Button feedback LED
+- **LED1 (Blue)**: GPIO 19 - Blinking pattern LED  
+- **Button**: GPIO 22 - User input (active low with internal pull-up)
+
+**Configuration:**
+GPIO pins can be customized via `idf.py menuconfig` under "Blinky Button Example" menu.
+
+**Hardware Setup:**
+- LEDs: Connect with appropriate current limiting resistors
+- Button: Connected between GPIO and GND (internal pull-up enabled)
 
 ## Behavior
 
@@ -34,14 +41,15 @@ The example uses a Board Support Package (BSP) that defines:
 - **OFF period**: 800ms (long pause)
 - **Automatic**: Starts immediately when the application launches
 
-### LED0 (Button Feedback)
+### LED0 (Button Feedback) 
 - **ON**: When button is pressed
 - **OFF**: When button is released
-- **Immediate**: No debouncing delay for instant feedback
+- **Debounced**: Uses ESP-IDF iot_button component for reliable operation
 
 ### Button Events
-- **BUTTON_PRESSED_SIG**: Generated on button press (falling edge)
-- **BUTTON_RELEASED_SIG**: Generated on button release (rising edge)
+- **BUTTON_PRESSED_SIG**: Generated on button press using iot_button component
+- **BUTTON_RELEASED_SIG**: Generated on button release using iot_button component
+- **Debouncing**: Automatic debouncing handled by ESP-IDF iot_button component
 
 ## Code Structure
 
@@ -64,11 +72,17 @@ The `BlinkyButton_dispatch()` function processes:
 3. **BUTTON_PRESSED_SIG**: Turn LED0 ON immediately
 4. **BUTTON_RELEASED_SIG**: Turn LED0 OFF immediately
 
-### FreeRTOS task
+### Memory Allocation
 
-- **Stack**: `configMINIMAL_STACK_SIZE * 2`
-- **Queue**: 10 events
+- **Stack**: `configMINIMAL_STACK_SIZE * 2` (static allocation)
+- **Queue**: 10 events (static allocation)
 - **Priority**: 1 (lowest user priority above idle)
+
+### Dependencies
+
+- **ESP-IDF**: v5.0 or higher
+- **FreeAct ESP32**: Main component
+- **ESP-IDF iot_button**: v4.1.4+ for reliable button handling
 
 ## Building and Running
 
@@ -88,6 +102,7 @@ vi main/idf_component.yml
 
 # Configure GPIOs 
 idf.py menuconfig
+# Navigate to: Component config -> Blinky Button Example
 
 # Build the project
 idf.py build
@@ -95,6 +110,12 @@ idf.py build
 # Flash and monitor
 idf.py flash monitor
 ```
+
+### Component Configuration
+
+The example uses component dependencies defined in `main/idf_component.yml`:
+- **FreeAct ESP32**: Main Active Object framework  
+- **ESP-IDF iot_button**: Professional button handling with debouncing
 
 ### Expected Output
 
@@ -121,10 +142,11 @@ You should observe:
 - One-shot timer re-arming for periodic behavior
 - ISR-safe timer operations
 
-### 3. Interrupt Handling
-- GPIO interrupt integration with Active Objects
-- Event posting from ISR context using `Active_postFromISR()`
-- Proper priority task waking
+### 3. Professional Button Handling
+- ESP-IDF iot_button component integration with Active Objects
+- Automatic debouncing and noise filtering
+- Task-context event posting (not ISR) using `Active_post()`
+- Event-driven callback mechanism
 
 
 ## Customization
@@ -146,10 +168,11 @@ TimeEvent_arm(&me->te, 800);  // OFF period (ms)
 
 ### Hardware Configuration
 
-Modify the BSP files (`bsp.h` and `bsp*.c`) to:
-- Change GPIO pin assignments
-- Adjust interrupt triggering (edge/level)
-- Add more LEDs or buttons
+```bash
+idf.py menuconfig
+# Navigate to: Component config -> Blinky Button Example
+# Configure: Red LED GPIO, Blue LED GPIO, Button GPIO
+```
 
 ## Troubleshooting
 
@@ -159,14 +182,16 @@ Modify the BSP files (`bsp.h` and `bsp*.c`) to:
 - Ensure adequate power supply
 
 ### Button Not Responding
-- Verify button wiring and pull-up/pull-down resistors
-- Check interrupt configuration in BSP
-- Monitor for bounce issues (consider adding debouncing)
+- Verify button wiring (connect between GPIO and GND)
+- Check GPIO configuration in menuconfig
+- Ensure button is active-low (pressed = connected to GND)
+- Verify iot_button component is working in logs
 
 ### Build Errors
 - Ensure ESP-IDF v5.0+ is installed
-- Verify FreeAct component is properly installed
-- Check include paths and dependencies
+- Verify FreeAct component is properly installed  
+- Check component dependencies in `main/idf_component.yml`
+- Ensure iot_button component v4.1.4+ is available
 
 ## Advanced Features
 
