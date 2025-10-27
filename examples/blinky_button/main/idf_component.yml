@@ -1,5 +1,6 @@
 dependencies:
   ## Required IDF version
-  idf: ">=5.0"
+  idf: '>=5.0'
   ## Update to the exact version of freeact-esp32 you want to use
   # ozanoner/freeact-esp32: "*"
+  espressif/button: ^4.1.4
